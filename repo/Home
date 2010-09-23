@@ -1,0 +1,51 @@
+Content-Type: text/x-zim-wiki
+Wiki-Format: zim 0.26
+Creation-Date: Unknown
+Modification-Date: 1
+
+====== Home ======
+Created Wednesday 15/11/2006
+
+The ubiquitous [[ScratchPad]] 
+
+[[TravelingIn2010]]
+
+[[LifeBits2010]]
+
+**Projects**
+* [[FedoraProject]] 
+	* [[ReviewTool]]
+* [[CpanClasses]]
+* [[ButterflyThinkpad]]
+* [[MagnetOnline]]
+* [[MovingChecklist]]
+* [[WebSites]]
+
+**Technical Notes**
+* [[DojoMojo]]
+* [[BuildingPerl]]
+
+**Notes**
+* [[CreditReports]]
+* [[ZeusInstallNotes]]
+* [[ResumeUpdating]] 
+* [[PhoneSyncNotes]]
+* [[FinanceNotes]]
+* [[RealEstateHunt]]!
+* [[FiveYearPlan]]
+
+**Apartment / Home info**
+* [[EquiptmentInformation]]
+* [[NetworkKeys]]
+* [[ShoppingList]] 
+* [[CarInfo]]
+
+**ToDo**
+* [[ToDo]]
+
+echo 1500 > [[/proc/sys/vm/dirty_writeback_centisecs]]
+echo 5 > /proc/sys/vm/laptop_mode
+
+[[YAPC]]
+
+

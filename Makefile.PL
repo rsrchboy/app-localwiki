@@ -16,13 +16,20 @@ license  'lgpl';
 readme_from $main_module;
 readme_markdown_from $main_module;
 
+requires 'namespace::autoclean' => '0.09';
+requires 'common::sense';
+
+requires 'Moose' => '0.94';
+requires 'MooseX::Types::Path::Class';
+requires 'MooseX::Types::Perl';
+
+requires 'File::ShareDir';
+requires 'Path::Class';
+
 requires 'Gtk2';
 requires 'Gtk2::Builder';
 requires 'Gtk2::Ex::HyperTextView' => '1.00';
 requires 'Gtk2::Ex::HyperTextBuffer' => '1.00';
-
-requires 'namespace::autoclean' => '0.09';
-requires 'Moose' => '0.94';
 
 test_requires 'Test::More';
 test_requires 'Test::Moose';

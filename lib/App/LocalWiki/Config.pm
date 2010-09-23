@@ -9,29 +9,51 @@
 #
 #############################################################################
 
-package App::LocalWiki;
+package App::LocalWiki::Config;
 
 use Moose;
 use common::sense;
-# one or the other
-#use namespace::autoclean;
 use MooseX::MarkAsMethods autoclean => 1;
-use MooseX::Types ':all';
+use MooseX::Types              ':all';
+use MooseX::Types::Path::Class ':all';
 
 with 'MooseX::Traits';
 
 use Path::Class;
 use Readonly;
 
-use App::LocalWiki::Config;
-use App::LocalWiki::Window::Main;
-
 our $VERSION = '0.000_01';
 
-#has config => 
-#has main_window => (
+has config => (
+    # traits => ...
+    # is => 'ro', 
+    reader => 'config', writer => '_config',
+    isa => 'HashRef', default => sub { { } },
+    # handles => ...
+);
+
+sub BUILD {
+    my $self = shift @_;
+
+    my $config = {
+
+        'window/main' => {
+
+        },
+
+        'window/about' => {
+
+        },
+
+        'widget/wikipage' => {
 
 
+        },
+
+    };
+    
+    $self->_config($config);
+}
 
 __PACKAGE__->meta->make_immutable;
 

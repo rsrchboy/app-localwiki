@@ -1,61 +1,94 @@
 #############################################################################
 #
-# A great new module!
+# |CURSOR|
 #
-# Author:  Chris Weyl <cweyl@alumni.drew.edu>
-# Company: No company, personal work
+# Author:  |AUTHOR| (|AUTHORREF|), <|EMAIL|>
+# Company: |COMPANY|
+# Created: |DATE|
 #
-# See the end of this file for copyright and author information.
+# Copyright (c) |YEAR| |COPYRIGHTHOLDER| <|EMAIL|>
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
 #
 #############################################################################
 
-package App::LocalWiki;
+package Gtk2::ExEx::With::Builder;
 
-use Moose;
+use Moose::Role;
+use namespace::autoclean;
 use common::sense;
-# one or the other
-#use namespace::autoclean;
-use MooseX::MarkAsMethods autoclean => 1;
-use MooseX::Types ':all';
 
-with 'MooseX::Traits';
+use MooseX::Types::Path::Class ':all';
+use MooseX::Types::Perl        ':all';
+
+use Gtk2::ExEx::MooseTypes ':all';
 
 use Path::Class;
-use Readonly;
+use File::ShareDir;
 
-use App::LocalWiki::Config;
-use App::LocalWiki::Window::Main;
+#use English qw{ -no_match_vars };  # Avoids regex performance penalty
 
 our $VERSION = '0.000_01';
 
-#has config => 
-#has main_window => (
+has filename   => (is => 'ro', isa => File, coerce => 1, required => 1);
+has signals_to => (is => 'ro', isa => 'Object', lazy_build => 1);
 
+has builder    => (
+    is => 'ro', isa => Gtk2Builder, lazy_build => 1,
+    handles => [ qw{ get_object } ],
+);
 
+sub _build_builder         { Gtk2::Builder->new() }
+sub _build_signals_to      { shift @_             }
+sub _build_widget          { $_[0]->builder->get_object($_[0]->widget_name) }
 
-__PACKAGE__->meta->make_immutable;
+requires 'BUILD';
+
+before BUILD => sub {
+    my $self = shift @_;
+    
+    my $builder = $self->builder;
+    $builder->add_from_file($self->filename);
+    $self->builder->connect_signals({}, $self->signals_to);
+};
+
+sub _build_widget { 
+    my $self = shift @_;
+
+    return $self->builder->get_object($self->widget_name);
+}
+
+1;
 
 __END__
 
 =head1 NAME
 
- - A great new module!
+<Module::Name> - <One line description of module's purpose>
 
 =head1 VERSION
 
-This documentation refers to  version 0.000_01.
+The initial template usually just has:
+
+This documentation refers to <Module::Name> version 0.0.1
+
 
 =head1 SYNOPSIS
 
-    use ;
-    # Brief but working code example(s) here showing the most common usage(s)
+	use <Module::Name>;
+	# Brief but working code example(s) here showing the most common usage(s)
 
-    # This section will be as far as many users bother reading
-    # so make it as educational and exemplary as possible.
+	# This section will be as far as many users bother reading
+	# so make it as educational and exemplary as possible.
 
 
 =head1 DESCRIPTION
 
+A full description of the module and its features.
+May include numerous subsections (i.e. =head2, =head3, etc.)
 
 
 =head1 SUBROUTINES/METHODS
@@ -107,22 +140,31 @@ L<...>
 
 =head1 BUGS AND LIMITATIONS
 
-All complex software has bugs lurking in it, and this module is no
-exception.
+A list of known problems with the module, together with some indication
+whether they are likely to be fixed in an upcoming release.
 
-Please report problems to Chris Weyl <cweyl@alumni.drew.edu>, or (preferred)
-to this package's RT tracker at E<bug-@rt.cpan.org>.
+Also a list of restrictions on the features the module does provide:
+data types that cannot be handled, performance issues and the circumstances
+in which they may arise, practical limitations on the size of data sets,
+special cases that are not (yet) handled, etc.
+
+The initial template usually just has:
+
+There are no known bugs in this module.
+
+Please report problems to |AUTHOR| <|EMAIL|>, or (preferred) 
+to this package's RT tracker at E<bug-PACKAGE@rt.cpan.org>.
 
 Patches are welcome.
 
 =head1 AUTHOR
 
-Chris Weyl <cweyl@alumni.drew.edu>
+|AUTHOR|  <|EMAIL|>
 
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c)  Chris Weyl <cweyl@alumni.drew.edu>
+Copyright (c) |YEAR| |COPYRIGHTHOLDER| <|EMAIL|>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -135,7 +177,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the
+License along with this library; if not, write to the 
 
     Free Software Foundation, Inc.
     59 Temple Place, Suite 330
