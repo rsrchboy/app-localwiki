@@ -4,17 +4,22 @@ sub extra_tests { warn 'You need Module::Install::ExtraTests installed' }
 
 use inc::Module::Install;
 
-my $main_module = '';
+my $main_module = 'lib/App/LocalWiki.pm';
 
 githubmeta;
 
-name     '';
+name     'App-LocalWiki';
 all_from $main_module;
 author   q{Chris Weyl <cweyl@alumni.drew.edu>};
 license  'lgpl';
 
 readme_from $main_module;
 readme_markdown_from $main_module;
+
+requires 'Gtk2';
+requires 'Gtk2::Builder';
+requires 'Gtk2::Ex::HyperTextView' => '1.00';
+requires 'Gtk2::Ex::HyperTextBuffer' => '1.00';
 
 requires 'namespace::autoclean' => '0.09';
 requires 'Moose' => '0.94';
