@@ -25,8 +25,8 @@ use Smart::Comments;
 extends 'Gtk2::ExEx::Widget';
 with    'Gtk2::ExEx::With::Builder';
 
-#use aliased 'App::LocalWiki::Widget::WikiPage';
 use App::LocalWiki::Widget::WikiPage;
+use App::LocalWiki::Window::About;
 
 use File::ShareDir;
 
@@ -49,9 +49,10 @@ sub brief_status {
     %arg = (id => 'brief-status', timeout => 5_000, %arg);
 
     #$self->push_status($arg{status}, $arg{id});
-    $self->push_status(@arg{qw/id status/});
+    my $id = $self->push_status(@arg{qw/id status/});
 
     Glib::Timeout->add($arg{timeout}, sub { $self->pop_status($arg{id}) });
+    #Glib::Timeout->add($arg{timeout}, sub { $self->pop_status($id) });
     return;
 }
 
@@ -75,10 +76,46 @@ around append_notebook_page => sub {
     # wrap with a scrolled window before we append it
     my $scroller = Gtk2::ScrolledWindow->new();
     $scroller->add_with_viewport($page);
+    $scroller->set(
+        'hscrollbar-policy' => 'automatic',
+        'vscrollbar-policy' => 'automatic',
+    );
     $scroller->show();
 
     return $self->$orig($scroller, @_);
 };
+
+has about_dialog => (
+    is => 'ro', isa => 'App::LocalWiki::Window::About', lazy_build => 1,
+    handles => {
+        show_about_dialog => 'show_all',
+        hide_about_dialog => 'hide_all',
+    },
+);
+
+sub _build_about_dialog { App::LocalWiki::Window::About->new(window => shift) }
+
+sub on_help_menu_about_activate { shift->show_about_dialog }
+
+has status_icon => (
+    is => 'ro', isa => 'Gtk2::StatusIcon', lazy_build => 1,
+    handles => {
+        notify_message => 'send_message',
+        clear_notify_message => 'cancel_message',
+    },
+);
+
+sub _build_status_icon {
+    my $self = shift @_;
+    
+    my $icon = Gtk2::StatusIcon->new_from_stock('gtk-indent');
+    $icon->set_tooltip('App::LocalWiki!');
+    $icon->signal_connect(
+        activate => sub { $self->visible ? $self->hide_all : $self->show_all },
+    );
+    $icon->set_visible(1);
+    return $icon;
+}
 
 has wiki_pages => (
     traits => [ 'Hash' ],
@@ -109,7 +146,7 @@ sub add_page {
     my ($self, $view) = @_;
 
     my $num = $self->append_notebook_page($view->widget, $view->title);
-    $view->show;
+    $view->widget->show_all;
     $self->_add_page($num => $view);
     return $num;
 }
@@ -131,6 +168,16 @@ sub BUILD {
     my $self = shift @_;
 
     $self->new_page;
+    $self->widget->show_all;
+    $self->status_icon;
+    return;
+}
+
+sub on_notebook1_change_current_page {
+    my ($self, $notebook, $arg1) = @_;
+
+    warn "changed page: $arg1";
+    $self->notify_message("changed page: $arg1");
     return;
 }
 
@@ -139,14 +186,6 @@ sub on_save_action_activate {
 
     ### on_save_action_activate...
     $self->get_current_page->save_page;
-}
-
-sub on_help_menu_about_activate {
-    my $self = shift @_;
-
-    warn "hi there!";
-    ### $self
-    ### @_
 }
 
 sub home_button_clicked { ... }

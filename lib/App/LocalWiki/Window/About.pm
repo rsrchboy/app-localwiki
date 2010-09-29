@@ -4,7 +4,6 @@
 #
 # Author:  |AUTHOR| (|AUTHORREF|), <|EMAIL|>
 # Company: |COMPANY|
-# Created: |DATE|
 #
 # Copyright (c) |YEAR| |COPYRIGHTHOLDER| <|EMAIL|>
 #
@@ -21,8 +20,6 @@ use Moose;
 use namespace::autoclean;
 use common::sense;
 
-use Smart::Comments;
-
 extends 'Gtk2::ExEx::Widget';
 with    'Gtk2::ExEx::With::Builder';
 
@@ -33,28 +30,7 @@ our $VERSION = '0.000_01';
 has '+filename'    => (default => 'share/about.glade');
 has '+widget_name' => (default => 'aboutdialog1');
 
-#sub on_help_menu_about_activate {
-before gtk_widget_hide => sub {
-    my $self = shift @_;
-
-    warn "hi there!";
-    my $widget = $self->widget;
-    ### self: blessed $self
-    ### widget: blessed $widget
-    ### @_
-    #$widget->hide();
-};
-
 __PACKAGE__->meta->make_immutable;
-
-package main;
-
-use Gtk2 -init;
-
-my $win = App::LocalWiki::Window::About->new();
-$win->widget->show();
-
-Gtk2->main();
 
 __END__
 

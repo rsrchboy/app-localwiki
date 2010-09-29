@@ -1,6 +1,6 @@
-package App::LocalWiki::Interface::Store;
+package App::LocalWiki::Interface::Repository;
 
-# ABSTRACT: required store methods
+# ABSTRACT: required repository methods
 
 use Moose::Role;
 use namespace::autoclean;

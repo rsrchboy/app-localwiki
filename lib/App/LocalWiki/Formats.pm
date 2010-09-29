@@ -1,7 +1,7 @@
 #
 #===============================================================================
 #
-#         FILE:  Page.pm
+#         FILE:  Formats.pm
 #
 #  DESCRIPTION:  
 #
@@ -11,28 +11,20 @@
 #       AUTHOR:  YOUR NAME (), 
 #      COMPANY:  
 #      VERSION:  1.0
-#      CREATED:  09/26/2010 12:57:18 AM
+#      CREATED:  09/29/2010 07:13:49 PM
 #     REVISION:  ---
 #===============================================================================
 
-package App::LocalWiki::Page;
-
 use Moose;
-use namespace::autoclean;
-use MooseX::InstanceTracking;
+use namspace::autoclean;
+use common::sense;
 
-has id
-display_name
-link_id
-in_store
+our $VERSION = '0.000_01';
 
-has store => (is => 'ro', does => 'App::LocalWiki::Interface::Store', required => 1);
+# uhmmmm....  keep it simple
 
-metadata
+list
+get
 
-cached
-
-sub save
-reload_from_store
 
 __PACKAGE__->meta->make_immutable;

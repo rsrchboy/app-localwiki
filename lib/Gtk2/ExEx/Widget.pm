@@ -28,8 +28,6 @@ use Gtk2;
 
 use Path::Class;
 
-#use English qw{ -no_match_vars };  # Avoids regex performance penalty
-
 our $VERSION = '0.000_01';
 
 has widget => (
@@ -42,18 +40,10 @@ has widget => (
         signal_emit
         show
         hide
+        show_all
+        hide_all
+        visible
     }],
-
-    handles_XXX => {
-        #gtk_widget_show => 'show',
-        #gtk_widget_hide => 'hide',
-        #widget_name => 'name',
-        signal_connect => 'signal_connect',
-        signal_connect_after => 'signal_connect_after',
-        signal_connect_swapped => 'signal_connect_swapped',
-        show => 'show',
-        hide => 'hide',
-    },
 );
 
 sub gtk_widget_hide { shift->widget->hide }

@@ -143,6 +143,8 @@ sub load_page {
     my ($self, $link_name) = @_;
 
     (my $file = $link_name) =~ s!:!/!g;
+    # FIXME
+    $link_name =~ s/^\.//;
     $file = "$ENV{HOME}/.zimrepo/$file.txt";
 
     warn "link id: $link_name; file: $file";

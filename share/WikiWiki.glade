@@ -31,7 +31,6 @@
                       <object class="GtkImageMenuItem" id="imagemenuitem1">
                         <property name="label">gtk-new</property>
                         <property name="visible">True</property>
-                        <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
                         <property name="always_show_image">True</property>
                       </object>
@@ -91,10 +90,10 @@
                     <property name="visible">True</property>
                     <child>
                       <object class="GtkImageMenuItem" id="imagemenuitem6">
-                        <property name="label">gtk-cut</property>
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <property name="always_show_image">True</property>
                       </object>
                     </child>
                     <child>
@@ -103,6 +102,7 @@
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <property name="always_show_image">True</property>
                       </object>
                     </child>
                     <child>
@@ -111,6 +111,7 @@
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <property name="always_show_image">True</property>
                       </object>
                     </child>
                     <child>
@@ -119,6 +120,7 @@
                         <property name="visible">True</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
+                        <property name="always_show_image">True</property>
                       </object>
                     </child>
                   </object>
@@ -239,8 +241,8 @@
                 <child>
                   <object class="GtkToolButton" id="save_button">
                     <property name="visible">True</property>
-                    <property name="related_action">save_action</property>
                     <property name="use_action_appearance">True</property>
+                    <property name="related_action">save_action</property>
                     <property name="label" translatable="yes">toolbutton5</property>
                     <property name="use_underline">True</property>
                   </object>
@@ -279,6 +281,7 @@
                     <property name="can_focus">True</property>
                     <property name="scrollable">True</property>
                     <property name="enable_popup">True</property>
+                    <signal name="change_current_page" handler="on_notebook1_change_current_page"/>
                     <child>
                       <object class="GtkScrolledWindow" id="scrolledwindow1">
                         <property name="visible">True</property>
@@ -294,9 +297,30 @@
                       </object>
                     </child>
                     <child type="tab">
-                      <object class="GtkLabel" id="label1">
+                      <object class="GtkHBox" id="hbox3">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Wiki</property>
+                        <child>
+                          <object class="GtkLabel" id="label1">
+                            <property name="visible">True</property>
+                            <property name="label" translatable="yes">Wiki</property>
+                          </object>
+                          <packing>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="close_tab">
+                            <property name="label">gtk-indent</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="relief">none</property>
+                            <property name="use_stock">True</property>
+                          </object>
+                          <packing>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
                       </object>
                       <packing>
                         <property name="tab_fill">False</property>
@@ -313,9 +337,31 @@
                       </packing>
                     </child>
                     <child type="tab">
-                      <object class="GtkLabel" id="label2">
+                      <object class="GtkHBox" id="hbox2">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Index</property>
+                        <child>
+                          <object class="GtkLabel" id="label2">
+                            <property name="visible">True</property>
+                            <property name="label" translatable="yes">Index</property>
+                          </object>
+                          <packing>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="tab_close">
+                            <property name="label">gtk-close</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="relief">none</property>
+                            <property name="use_stock">True</property>
+                            <property name="always_show_image">True</property>
+                          </object>
+                          <packing>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
                       </object>
                       <packing>
                         <property name="position">1</property>
@@ -324,16 +370,6 @@
                     </child>
                     <child>
                       <placeholder/>
-                    </child>
-                    <child type="tab">
-                      <object class="GtkLabel" id="label3">
-                        <property name="visible">True</property>
-                        <property name="label" translatable="yes">page 3</property>
-                      </object>
-                      <packing>
-                        <property name="position">2</property>
-                        <property name="tab_fill">False</property>
-                      </packing>
                     </child>
                   </object>
                   <packing>
@@ -396,5 +432,9 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkAction" id="close_tab_action">
+    <property name="stock_id">gtk-close</property>
+    <property name="always_show_image">True</property>
   </object>
 </interface>

@@ -29,12 +29,15 @@ use Gtk2::ExEx::MooseTypes ':all';
 use Path::Class;
 use File::ShareDir;
 
-#use English qw{ -no_match_vars };  # Avoids regex performance penalty
-
 our $VERSION = '0.000_01';
 
 has filename   => (is => 'ro', isa => File, coerce => 1, required => 1);
 has signals_to => (is => 'ro', isa => 'Object', lazy_build => 1);
+
+has xml => (
+    traits => [ 'String' ],
+    is => 'rw', isa => 'Str', lazy => 1,
+);
 
 has builder    => (
     is => 'ro', isa => Gtk2Builder, lazy_build => 1,
