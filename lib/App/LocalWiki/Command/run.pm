@@ -1,20 +1,3 @@
-#
-#===============================================================================
-#
-#         FILE:  run.pm
-#
-#  DESCRIPTION:  
-#
-#        FILES:  ---
-#         BUGS:  ---
-#        NOTES:  ---
-#       AUTHOR:  YOUR NAME (), 
-#      COMPANY:  
-#      VERSION:  1.0
-#      CREATED:  10/03/2010 07:18:55 PM
-#     REVISION:  ---
-#===============================================================================
-
 package App::LocalWiki::Command::run;
 
 use Moose;

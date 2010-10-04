@@ -82,7 +82,32 @@ around append_notebook_page => sub {
     );
     $scroller->show();
 
-    return $self->$orig($scroller, @_);
+    #my $img = Gtk2::Image->new_from_stock('gtk-close', 'button'); #, Gtk2::IconSize->('button'));
+    #my $img = Gtk2::Image->new_from_stock('gtk-close', Gtk2::IconSize->from_name('button'));
+    my $box = Gtk2::HBox->new;
+    #$box->add_child(Gtk2::Label->new(shift @_));
+    #$box->add(Gtk2::Label->new(shift @_));
+    $box->pack_start_defaults(Gtk2::Label->new('test'));
+    my $img = Gtk2::Image->new_from_icon_name('gtk-close', Gtk2::IconSize->from_name('button'));
+    my $button = Gtk2::Button->new;
+    #my $button = Gtk2::Button->new_from_stock('gtk-close');
+    #my $button = Gtk2::Button->new_from_stock({ stock_id => 'gtk-close', label => q{} });
+    $button->signal_connect(pressed => sub { ... });
+    #$button->set_label(shift @_);
+    #$button->set_label('gtk-close');
+    #$button->set('use-stock' => 1);
+    $button->set(relief => 'none');
+    #$button->set(image => $img);
+    #$button->set_image($img, 'button');
+    $button->set_image($img); #, Gtk2::IconSize->('button'));
+    $button->set_image_position('right');
+    #$button->show_all;
+    $box->pack_start_defaults($button);
+    $box->show_all;
+
+    #return $self->$orig($scroller, @_);
+    #return $self->$orig($scroller, $button);
+    return $self->$orig($scroller, $box);
 };
 
 has about_dialog => (
@@ -146,7 +171,7 @@ sub add_page {
     my ($self, $view) = @_;
 
     my $num = $self->append_notebook_page($view->widget, $view->title);
-    $view->widget->show_all;
+    $view->show_all;
     $self->_add_page($num => $view);
     return $num;
 }
