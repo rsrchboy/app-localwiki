@@ -86,8 +86,8 @@ around append_notebook_page => sub {
     #my $img = Gtk2::Image->new_from_stock('gtk-close', Gtk2::IconSize->from_name('button'));
     my $box = Gtk2::HBox->new;
     #$box->add_child(Gtk2::Label->new(shift @_));
-    #$box->add(Gtk2::Label->new(shift @_));
-    $box->pack_start_defaults(Gtk2::Label->new('test'));
+    $box->pack_start_defaults(Gtk2::Label->new(shift @_));
+    #$box->pack_start_defaults(Gtk2::Label->new('test'));
     my $img = Gtk2::Image->new_from_icon_name('gtk-close', Gtk2::IconSize->from_name('button'));
     my $button = Gtk2::Button->new;
     #my $button = Gtk2::Button->new_from_stock('gtk-close');
