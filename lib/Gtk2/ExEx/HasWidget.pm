@@ -32,7 +32,7 @@ use Gtk2 ();
     );
 
     has $_ => (@signal_defn, handles => $gen_handles->($_))
-        for qw{ signals after_signals swapped_signals };
+        for qw{ signals after_signals swapped_signals properties };
 
     has gtk2_builder => (is => 'ro', isa => 'Gtk2::Builder', ...);
 

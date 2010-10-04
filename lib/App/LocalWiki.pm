@@ -13,24 +13,14 @@ package App::LocalWiki;
 
 use Moose;
 use common::sense;
-# one or the other
-#use namespace::autoclean;
-use MooseX::MarkAsMethods autoclean => 1;
-use MooseX::Types ':all';
 
-with 'MooseX::Traits';
-
-use Path::Class;
-use Readonly;
-
-use App::LocalWiki::Config;
-use App::LocalWiki::Window::Main;
+extends 'MooseX::App::Cmd';
+# FIXME do we want to do some sort of apply-to-instance dealie here?
+#with 'MooseX::Traits';
 
 our $VERSION = '0.000_01';
 
-#has config => 
-#has main_window => (
-
+sub default_command { 'run' }
 
 
 __PACKAGE__->meta->make_immutable;

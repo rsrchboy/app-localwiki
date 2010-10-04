@@ -198,7 +198,7 @@ sub new_page_button_clicked {
 
 __PACKAGE__->meta->make_immutable;
 
-#__END__
+__END__
 
 package main;
 
