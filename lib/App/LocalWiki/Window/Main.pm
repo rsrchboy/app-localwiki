@@ -15,11 +15,12 @@
 #
 #############################################################################
 
-package App::LocalWiki::Window::Main; 
+package App::LocalWiki::Window::Main;
 
 use Moose;
 use namespace::autoclean;
 use common::sense;
+use Gtk2::ExEx::Declarative 'widget';
 use Smart::Comments;
 
 extends 'Gtk2::ExEx::Widget';
@@ -45,7 +46,7 @@ has statusbar => (
 
 sub brief_status {
     my ($self, %arg) = @_;
-    
+
     %arg = (id => 'brief-status', timeout => 5_000, %arg);
 
     #$self->push_status($arg{status}, $arg{id});
@@ -73,40 +74,37 @@ around append_notebook_page => sub {
     my ($orig, $self) = (shift, shift);
     my $page = shift @_;
 
-    # wrap with a scrolled window before we append it
-    my $scroller = Gtk2::ScrolledWindow->new();
-    $scroller->add_with_viewport($page);
-    $scroller->set(
-        'hscrollbar-policy' => 'automatic',
-        'vscrollbar-policy' => 'automatic',
-    );
-    $scroller->show();
+    # FIXME for Gtk2::Declarative
+    # Widget => {
+    #   new => sub { ... },  # only if needed
+    #   set => { ... },
+    #   signals => { ... },
+    #   # children handling???
 
-    #my $img = Gtk2::Image->new_from_stock('gtk-close', 'button'); #, Gtk2::IconSize->('button'));
-    #my $img = Gtk2::Image->new_from_stock('gtk-close', Gtk2::IconSize->from_name('button'));
+    my $scroller = widget ScrolledWindow => (
+        BUILD => sub { warn; shift->add_with_viewport($page) },
+        set => {
+            'hscrollbar-policy' => 'automatic',
+            'vscrollbar-policy' => 'automatic',
+        }
+    );
+
+    $scroller->show();
     my $box = Gtk2::HBox->new;
-    #$box->add_child(Gtk2::Label->new(shift @_));
     $box->pack_start_defaults(Gtk2::Label->new(shift @_));
-    #$box->pack_start_defaults(Gtk2::Label->new('test'));
     my $img = Gtk2::Image->new_from_icon_name('gtk-close', Gtk2::IconSize->from_name('button'));
-    my $button = Gtk2::Button->new;
-    #my $button = Gtk2::Button->new_from_stock('gtk-close');
-    #my $button = Gtk2::Button->new_from_stock({ stock_id => 'gtk-close', label => q{} });
-    $button->signal_connect(pressed => sub { ... });
-    #$button->set_label(shift @_);
-    #$button->set_label('gtk-close');
-    #$button->set('use-stock' => 1);
-    $button->set(relief => 'none');
-    #$button->set(image => $img);
-    #$button->set_image($img, 'button');
-    $button->set_image($img); #, Gtk2::IconSize->('button'));
-    $button->set_image_position('right');
-    #$button->show_all;
+    my $button = widget Button => (
+        signal_connect => { pressed => sub { ... } },
+        set => {
+            relief         => 'none',
+            image          => $img,
+            image_position => 'right',
+        },
+    );
+
     $box->pack_start_defaults($button);
     $box->show_all;
 
-    #return $self->$orig($scroller, @_);
-    #return $self->$orig($scroller, $button);
     return $self->$orig($scroller, $box);
 };
 
@@ -132,13 +130,18 @@ has status_icon => (
 
 sub _build_status_icon {
     my $self = shift @_;
-    
-    my $icon = Gtk2::StatusIcon->new_from_stock('gtk-indent');
-    $icon->set_tooltip('App::LocalWiki!');
-    $icon->signal_connect(
-        activate => sub { $self->visible ? $self->hide_all : $self->show_all },
+
+    my $icon = widget StatusIcon => (
+        signal_connect => {
+            activate => sub { $self->visible ? $self->hide_all : $self->show_all },
+        },
+        set => {
+            'tooltip-text' => 'App::LocalWiki!',
+            stock          => 'gtk-indent',
+            visible        => 1,
+        },
     );
-    $icon->set_visible(1);
+
     return $icon;
 }
 
@@ -215,7 +218,7 @@ sub on_save_action_activate {
 
 sub home_button_clicked { ... }
 
-sub new_page_button_clicked { 
+sub new_page_button_clicked {
     my $self = shift @_;
 
     $self->new_page();
@@ -323,7 +326,7 @@ The initial template usually just has:
 
 There are no known bugs in this module.
 
-Please report problems to |AUTHOR| <|EMAIL|>, or (preferred) 
+Please report problems to |AUTHOR| <|EMAIL|>, or (preferred)
 to this package's RT tracker at E<bug-PACKAGE@rt.cpan.org>.
 
 Patches are welcome.
@@ -348,7 +351,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the 
+License along with this library; if not, write to the
 
     Free Software Foundation, Inc.
     59 Temple Place, Suite 330

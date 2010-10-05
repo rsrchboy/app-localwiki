@@ -20,6 +20,7 @@ package App::LocalWiki::Widget::WikiPage;
 use Moose;
 use namespace::autoclean;
 use common::sense;
+use Gtk2::ExEx::Declarative 'widget';
 use Smart::Comments;
 use IO::File;
 
@@ -54,7 +55,7 @@ has target_list => (
 );
 
 sub _build_buffer {
-    my $self = shift @_; 
+    my $self = shift @_;
 
     my $buffer = Gtk2::Ex::HyperTextBuffer->new();
     $buffer->create_default_tags;
@@ -86,14 +87,16 @@ sub _build_target_list {
 around _build__signals_to_connect => sub {
     my ($orig, $self) = @_;
 
+    return $self->$orig(@_);
+
     my $prior_signals = $self->$orig(@_);
     return {
 
         %$prior_signals,
         link_enter   => sub { shift->push_status('in link', 'link' ) },
-        link_leave => sub { shift->pop_status('link') }, 
+        link_leave => sub { shift->pop_status('link') },
         link_clicked => sub { shift->link_clicked(@_) },
-    
+
         key_press_event => sub { shift->on_key_press_event(@_) },
 
         populate_popup => sub { ... },
@@ -104,24 +107,29 @@ around _build__signals_to_connect => sub {
 sub _build_widget {
     my $self = shift @_;
 
-    my $htext = Gtk2::Ex::HyperTextView->new();
 
-    $htext->set_left_margin(10);
-    $htext->set_right_margin(5);
+    my $htext = widget '+Gtk2::Ex::HyperTextView' => (
 
-    #$htext->set_tabs( Gtk2::Pango::TabArray->new_with_positions(
-    #    # initial_size, pos_in_pixels, ... allign => position
-    #    1, 1, 'left' => $$style{tabs} ) )
-    #    if $$style{tabs};
+        signal_connect => {
+                               # FIXME maybe call everything as a method...?
+            link_enter      => sub { shift->push_status('in link', 'link' ) },
+            link_leave      => sub { shift->pop_status('link') },
+            link_clicked    => sub { $self->link_clicked(@_) },
+            key_press_event => sub { $self->>on_key_press_event(@_) },
+            populate_popup  => sub { ... },
+        },
+        call_methods => {
+            set_left_margin  => [ 10 ],
+            set_right_margin => [  5 ],
+            drag_dest_set => [
+                ['motion', 'highlight'],
+                ['link', 'copy', 'move'], # We would prefer only 'link' here, but KDE needs 'move'
+            ],
+            drag_dest_set_target_list => [ $self->target_list ],
+            set_buffer => [ $self->buffer ],
+        },
 
-    $htext->drag_dest_set(
-        ['motion', 'highlight'],
-        ['link', 'copy', 'move'], # We would prefer only 'link' here, but KDE needs 'move' 
     );
-
-    $htext->drag_dest_set_target_list($self->target_list);
-    $htext->set_buffer($self->buffer);
-    #$scrolled_window->add($htext);
 
     return $htext;
 }
@@ -153,7 +161,7 @@ sub load_page {
     $self->_current_file($file);
 
     my $page = {};
-    my $parse_tree = App::LocalWiki::Format::Zim->load_tree($fh, $page); 
+    my $parse_tree = App::LocalWiki::Format::Zim->load_tree($fh, $page);
     #$self->buffer->set_parse_tree($parse_tree);
     $self->set_parse_tree($parse_tree);
 
@@ -183,11 +191,11 @@ sub save_page { #warn "set_parse_tree from ", join(' ', caller), "\n" ;
         'Modification-Date' => $date,
         'Creation-Date'     => $date,
     };
-    
+
     # FIXME
     App::LocalWiki::Format::Zim->save_tree($fh, $tree, $p);
     $fh->close;
-        
+
     $self->brief_status(status => "$file saved");
     return;
 }
@@ -210,7 +218,7 @@ sub BUILD {
     #my ($fh, $page) = (scalar IO::File->open("< repo/Home"), {});
     my $fh = IO::File->new("< repo/Home");
     my $page = {};
-    my $parse_tree = App::LocalWiki::Format::Zim->load_tree($fh, $page); 
+    my $parse_tree = App::LocalWiki::Format::Zim->load_tree($fh, $page);
     $self->buffer->set_parse_tree($parse_tree);
 }
 
@@ -261,7 +269,7 @@ sub on_key_press_event { # some extra keybindings
         }
         else { return 0 }
     }
-    
+
     if ($val == $k_return or $val == $k_kp_enter) { # Enter
         my $buffer = $htext->get_buffer;
         my $iter = $buffer->get_iter_at_mark($buffer->get_insert());
@@ -336,7 +344,7 @@ sub on_key_press_event { # some extra keybindings
         else { $buffer->place_cursor($insert) }
         return 1;
     }
-        
+
     #else { printf "key %x pressed\n", $val } # perldoc -m Gtk2::Gdk::Keysyms
 
     return 0;
@@ -353,7 +361,7 @@ sub _is_verbatim {
 =item C<parse_line(ITER)>
 
 This method is called when the user is about to insert a linebreak.
-It checks the line left of the cursor of any markup that needs 
+It checks the line left of the cursor of any markup that needs
 updating. It also takes care of autoindenting.
 
 When TRUE is returned the widget does not receive the linebreak.
@@ -490,7 +498,7 @@ sub parse_word {
         }
         my $offset;
         if (defined $char) {
-            # insert char 
+            # insert char
             $offset = $iter->get_offset;
             _user_action_ { $buffer->insert($iter, $char) } $buffer;
             $iter = $buffer->get_iter_at_offset($offset);
@@ -573,7 +581,7 @@ sub parse_word {
             $htext->apply_link(undef, $start, $end);
         } $buffer;
         return 1;
-        
+
     }
     elsif ( $self->{app}{settings}{use_utf8_ent} &&
         $line =~ /(?<!\S)\\(\w+)$/
@@ -581,7 +589,7 @@ sub parse_word {
         my $word = $1;
         my $chr = _entity($word);
         return 0 unless defined $chr;
-        
+
         if (defined $char) {
             my $offset = $iter->get_offset;
             _user_action_ { $buffer->insert($iter, $char) } $buffer;
@@ -604,7 +612,7 @@ sub parse_word {
     else {
         $self->_match_words($buffer, $iter);
     }
-    
+
     return 0;
 }
 
@@ -625,7 +633,7 @@ sub _match_words {
     my $start = $iter->copy;
     $start->backward_chars( $iter->get_line_offset );
     my $line = $start->get_text($iter);
-    
+
     while ($line =~ /\w/) {
         my ($word) = ($line =~ /(\w+)/);
         #warn "Checking: >>$word<<\n";
@@ -774,7 +782,7 @@ The initial template usually just has:
 
 There are no known bugs in this module.
 
-Please report problems to |AUTHOR| <|EMAIL|>, or (preferred) 
+Please report problems to |AUTHOR| <|EMAIL|>, or (preferred)
 to this package's RT tracker at E<bug-PACKAGE@rt.cpan.org>.
 
 Patches are welcome.
@@ -799,7 +807,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 Lesser General Public License for more details.
 
 You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the 
+License along with this library; if not, write to the
 
     Free Software Foundation, Inc.
     59 Temple Place, Suite 330
