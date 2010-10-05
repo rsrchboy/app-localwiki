@@ -1,12 +1,6 @@
 #############################################################################
 #
-# |CURSOR|
-#
-# Author:  |AUTHOR| (|AUTHORREF|), <|EMAIL|>
-# Company: |COMPANY|
-# Created: |DATE|
-#
-# Copyright (c) |YEAR| |COPYRIGHTHOLDER| <|EMAIL|>
+# Copyright (c) 2010 |COPYRIGHTHOLDER| <|EMAIL|>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -59,7 +53,6 @@ sub _build_buffer {
 
     my $buffer = Gtk2::Ex::HyperTextBuffer->new();
     $buffer->create_default_tags;
-    #$htext->set_buffer($buffer);
 
     return $buffer;
 }
@@ -67,56 +60,36 @@ sub _build_buffer {
 sub _build_target_list {
     my $self = shift @_;
 
-    # FIXME
-    my $tlist = Gtk2::TargetList->new();
-    if (Gtk2->CHECK_VERSION(2, 6, 0)) {
-        $tlist->add_uri_targets(0);
-        $tlist->add_text_targets(1);
-    }
-    else { # 2.4
-        $tlist->add_table(
-            ['text/uri-list', [], 0],
-            $self->list_text_targets(1) );
-    }
+    # XXX note, minimum required version here
+    #if (Gtk2->CHECK_VERSION(2, 6, 0)) {
 
-    $tlist->add_table(['text/x-zim-page-list', [], 2]);
-
+    my $tlist = widget TargetList => (
+        call_methods => {
+            add_uri_targets  => [ 0 ],
+            add_text_targets => [ 1 ],
+            add_table        => [ ['text/x-zim-page-list', [], 2] ],
+        },
+    );
     return $tlist;
 }
-
-around _build__signals_to_connect => sub {
-    my ($orig, $self) = @_;
-
-    return $self->$orig(@_);
-
-    my $prior_signals = $self->$orig(@_);
-    return {
-
-        %$prior_signals,
-        link_enter   => sub { shift->push_status('in link', 'link' ) },
-        link_leave => sub { shift->pop_status('link') },
-        link_clicked => sub { shift->link_clicked(@_) },
-
-        key_press_event => sub { shift->on_key_press_event(@_) },
-
-        populate_popup => sub { ... },
-    };
-
-};
 
 sub _build_widget {
     my $self = shift @_;
 
-
     my $htext = widget '+Gtk2::Ex::HyperTextView' => (
 
         signal_connect => {
-                               # FIXME maybe call everything as a method...?
-            link_enter      => sub { shift->push_status('in link', 'link' ) },
-            link_leave      => sub { shift->pop_status('link') },
+            link_enter      => sub { $self->push_status('in link', 'link' ) },
+            link_leave      => sub { $self->pop_status('link') },
             link_clicked    => sub { $self->link_clicked(@_) },
-            key_press_event => sub { $self->>on_key_press_event(@_) },
+            key_press_event => sub { $self->on_key_press_event(@_) },
             populate_popup  => sub { ... },
+        },
+        signal_connect_after => {
+            toggle_overwrite => sub { $self->on_toggle_overwrite },
+        },
+        signal_connect_swapped => {
+            drag_data_received => sub { warn },
         },
         call_methods => {
             set_left_margin  => [ 10 ],
@@ -135,10 +108,7 @@ sub _build_widget {
 }
 
 sub link_clicked {
-    # ## @_
-    #my $self = shift @_;
     my ($self, $view, $link_name) = @_;
-    # ## @_
 
     $self->load_page($link_name);
     return;
@@ -162,13 +132,12 @@ sub load_page {
 
     my $page = {};
     my $parse_tree = App::LocalWiki::Format::Zim->load_tree($fh, $page);
-    #$self->buffer->set_parse_tree($parse_tree);
     $self->set_parse_tree($parse_tree);
 
     return;
 }
 
-sub save_page { #warn "set_parse_tree from ", join(' ', caller), "\n" ;
+sub save_page {
     my ($self) = @_;
 
     #croak "You tried to save page '$self', but it is read_only"
@@ -205,21 +174,9 @@ use App::LocalWiki::Format::Zim;
 
 sub BUILD {
     my $self = shift @_;
-    my $htext = $self->widget;
-
-    #$htext->signal_connect_swapped( drag_data_received => \&on_drag_data_received, $self );
-    #$htext->signal_connect(drag_motion => \&on_drag_motion); # debug
-    $self->signal_connect_after(toggle_overwrite => \&on_toggle_overwrite, $self);
-    $self->signal_connect_swapped( drag_data_received => sub { warn }, $self );
 
     $self->load_page('Home');
     return;
-    # load the page
-    #my ($fh, $page) = (scalar IO::File->open("< repo/Home"), {});
-    my $fh = IO::File->new("< repo/Home");
-    my $page = {};
-    my $parse_tree = App::LocalWiki::Format::Zim->load_tree($fh, $page);
-    $self->buffer->set_parse_tree($parse_tree);
 }
 
 ## WARNING: here there be dragons
@@ -721,7 +678,7 @@ A full description of the module and its features.
 May include numerous subsections (i.e. =head2, =head3, etc.)
 
 
-=head1 SUBROUTINES/METHODS
+=head1 METHODS
 
 A separate section listing the public components of the module's interface.
 These normally consist of either subroutines that may be exported, or methods
@@ -732,53 +689,11 @@ In an object-oriented module, this section should begin with a sentence of the
 form "An object of this class represents...", to give the reader a high-level
 context to help them understand the methods that are subsequently described.
 
-
-=head1 DIAGNOSTICS
-
-A list of every error and warning message that the module can generate
-(even the ones that will "never happen"), with a full explanation of each
-problem, one or more likely causes, and any suggested remedies.
-
-
-=head1 CONFIGURATION AND ENVIRONMENT
-
-A full explanation of any configuration system(s) used by the module,
-including the names and locations of any configuration files, and the
-meaning of any environment variables or properties that can be set. These
-descriptions must also include details of any configuration language used.
-
-
-=head1 DEPENDENCIES
-
-A list of all the other modules that this module relies upon, including any
-restrictions on versions, and an indication whether these required modules are
-part of the standard Perl distribution, part of the module's distribution,
-or must be installed separately.
-
-
-=head1 INCOMPATIBILITIES
-
-A list of any modules that this module cannot be used in conjunction with.
-This may be due to name conflicts in the interface, or competition for
-system or program resources, or due to internal limitations of Perl
-(for example, many modules that use source code filters are mutually
-incompatible).
-
 =head1 SEE ALSO
 
 L<...>
 
 =head1 BUGS AND LIMITATIONS
-
-A list of known problems with the module, together with some indication
-whether they are likely to be fixed in an upcoming release.
-
-Also a list of restrictions on the features the module does provide:
-data types that cannot be handled, performance issues and the circumstances
-in which they may arise, practical limitations on the size of data sets,
-special cases that are not (yet) handled, etc.
-
-The initial template usually just has:
 
 There are no known bugs in this module.
 
@@ -794,7 +709,7 @@ Patches are welcome.
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) |YEAR| |COPYRIGHTHOLDER| <|EMAIL|>
+Copyright (c) 2010 |COPYRIGHTHOLDER| <|EMAIL|>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public

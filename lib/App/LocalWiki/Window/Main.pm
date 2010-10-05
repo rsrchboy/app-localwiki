@@ -82,7 +82,7 @@ around append_notebook_page => sub {
     #   # children handling???
 
     my $scroller = widget ScrolledWindow => (
-        BUILD => sub { warn; shift->add_with_viewport($page) },
+        BUILD => sub { shift->add_with_viewport($page) },
         set => {
             'hscrollbar-policy' => 'automatic',
             'vscrollbar-policy' => 'automatic',
@@ -107,6 +107,8 @@ around append_notebook_page => sub {
 
     return $self->$orig($scroller, $box);
 };
+
+after remove_notebook_page => sub { ... };
 
 has about_dialog => (
     is => 'ro', isa => 'App::LocalWiki::Window::About', lazy_build => 1,
@@ -223,6 +225,8 @@ sub new_page_button_clicked {
 
     $self->new_page();
 }
+
+sub gtk_main_quit { Gtk2->main_quit }
 
 __PACKAGE__->meta->make_immutable;
 

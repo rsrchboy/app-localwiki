@@ -43,7 +43,7 @@ sub widget {
 
     $widget->set(%{ $arg{set} }) if $arg{set};
 
-    for my $method (qw{ signal_connect }) {
+    for my $method (qw{ signal_connect signal_connect_after signal_connect_swapped}) {
 
         my %signal = %{ $arg{$method} || {} };
         $widget->$method($_ => $signal{$_}) for keys %signal;
