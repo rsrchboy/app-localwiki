@@ -1,11 +1,5 @@
 #############################################################################
 #
-# |CURSOR|
-#
-# Author:  |AUTHOR| (|AUTHORREF|), <|EMAIL|>
-# Company: |COMPANY|
-# Created: |DATE|
-#
 # Copyright (c) |YEAR| |COPYRIGHTHOLDER| <|EMAIL|>
 #
 # This library is free software; you can redistribute it and/or
