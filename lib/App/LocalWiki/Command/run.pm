@@ -26,7 +26,8 @@ sub execute {
     # FIXME this may need to take place before loading other packages
     Gtk2->init();
 
-    my $win = App::LocalWiki::Window::Main->new();
+    #my $win = App::LocalWiki::Window::Main->new();
+    my $win = $self->app->main_window_class->new();
     $win->widget->show();
 
     Gtk2->main();

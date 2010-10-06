@@ -7,7 +7,6 @@
     <property name="stock_id">gtk-save</property>
     <signal name="activate" handler="on_save_action_activate"/>
   </object>
-  <object class="GtkListStore" id="liststore1"/>
   <object class="GtkWindow" id="window1">
     <property name="default_width">500</property>
     <property name="default_height">700</property>
