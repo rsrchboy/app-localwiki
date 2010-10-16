@@ -28,7 +28,8 @@ sub execute {
 
     #my $win = App::LocalWiki::Window::Main->new();
     my $win = $self->app->main_window_class->new();
-    $win->widget->show();
+    #$win->widget->show();
+    $win->show_all();
 
     Gtk2->main();
     ...

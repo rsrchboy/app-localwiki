@@ -28,7 +28,13 @@ our $VERSION = '0.000_01';
 has '+widget_name' => (default => 'wah wah');
 has buffer => (
     is => 'ro', isa => 'Gtk2::Ex::HyperTextBuffer', lazy_build => 1,
-    handles => [ qw{ set_parse_tree get_parse_tree } ],
+    handles => {
+        toggle_bold      => [ apply_format => 'bold'      ],
+        toggle_italic    => [ apply_format => 'italic'    ],
+        toggle_underline => [ apply_format => 'underline' ],
+
+        ( map { $_ => $_ } qw{ set_parse_tree get_parse_tree } ),
+    },
 );
 
 has config => (is => 'ro', isa => 'HashRef', default => sub { { } });

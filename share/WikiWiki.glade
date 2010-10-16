@@ -242,10 +242,32 @@
                 <child>
                   <object class="GtkToolButton" id="save_button">
                     <property name="visible">True</property>
-                    <property name="use_action_appearance">True</property>
                     <property name="related_action">save_action</property>
+                    <property name="use_action_appearance">True</property>
                     <property name="label" translatable="yes">toolbutton5</property>
                     <property name="use_underline">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparatorToolItem" id="toolbutton5">
+                    <property name="visible">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="homogeneous">True</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkToolButton" id="meta_bar_button">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">meta</property>
+                    <property name="use_underline">True</property>
+                    <property name="stock_id">gtk-justify-fill</property>
+                    <signal name="clicked" handler="meta_bar_button_clicked"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -280,6 +302,7 @@
                   <object class="GtkNotebook" id="notebook1">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="show_tabs">False</property>
                     <property name="scrollable">True</property>
                     <property name="enable_popup">True</property>
                     <signal name="change_current_page" handler="on_notebook1_change_current_page"/>

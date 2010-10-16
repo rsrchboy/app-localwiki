@@ -20,10 +20,8 @@ extends 'MooseX::App::Cmd';
 
 our $VERSION = '0.000_01';
 
-sub default_command { 'run' }
-
-sub main_window_class { 'App::LocalWiki::Window::Main' }
-
+sub default_command          { 'run'                                 }
+sub main_window_class        { 'App::LocalWiki::Window::Main'        }
 sub preferences_dialog_class { 'App::LocalWiki::Dialog::Preferences' }
 
 # XXX some sort of MooseX::Hooks here

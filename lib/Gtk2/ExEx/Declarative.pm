@@ -49,6 +49,8 @@ sub widget {
         $widget->$method($_ => $signal{$_}) for keys %signal;
     }
     
+    $widget->connect(@{$_}) for @{ $arg{connect} };
+
     my %call_methods = %{ $arg{call_methods} || {} };
     $widget->$_(@{ $call_methods{$_} }) for keys %call_methods;
 

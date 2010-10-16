@@ -51,6 +51,26 @@ sub brief_status {
     return;
 }
 
+has accel_group => (
+    is => 'ro', isa => 'Gtk2::AccelGroup', lazy_build => 1,
+    handles => { },
+);
+
+sub _build_accel_group {
+    my $self = shift @_;
+
+    my $ctrl = sub { (Gtk2::Gdk->keyval_from_name(@_), [ 'control-mask' ]) };
+
+    my $group = widget AccelGroup => (
+        connect => [
+            [ $ctrl->('B'), [], sub { $self->get_current_page->toggle_bold      } ],
+            [ $ctrl->('I'), [], sub { $self->get_current_page->toggle_italic    } ],
+            [ $ctrl->('U'), [], sub { $self->get_current_page->toggle_underline } ],
+        ],
+    );
+    return $group;
+}
+
 has notebook => (
     is => 'ro', isa => 'Gtk2::Notebook', lazy_build => 1,
     handles => {
@@ -68,13 +88,6 @@ around append_notebook_page => sub {
     my ($orig, $self) = (shift, shift);
     my $page = shift @_;
 
-    # FIXME for Gtk2::Declarative
-    # Widget => {
-    #   new => sub { ... },  # only if needed
-    #   set => { ... },
-    #   signals => { ... },
-    #   # children handling???
-
     my $scroller = widget ScrolledWindow => (
         BUILD => sub { shift->add_with_viewport($page) },
         set => {
@@ -84,8 +97,6 @@ around append_notebook_page => sub {
     );
 
     $scroller->show();
-    my $box = Gtk2::HBox->new;
-    $box->pack_start_defaults(Gtk2::Label->new(shift @_));
     my $img = Gtk2::Image->new_from_icon_name('gtk-close', Gtk2::IconSize->from_name('button'));
     my $button = widget Button => (
         signal_connect => { pressed => sub { ... } },
@@ -96,6 +107,8 @@ around append_notebook_page => sub {
         },
     );
 
+    my $box = Gtk2::HBox->new;
+    $box->pack_start_defaults(Gtk2::Label->new(shift @_));
     $box->pack_start_defaults($button);
     $box->show_all;
 
@@ -117,7 +130,7 @@ sub _build_about_dialog { App::LocalWiki::Window::About->new(window => shift) }
 sub on_help_menu_about_activate { shift->show_about_dialog }
 
 has status_icon => (
-    is => 'ro', isa => 'Gtk2::StatusIcon', lazy_build => 1,
+    is => 'ro', isa => 'Gtk2::StatusIcon', builder => '_build_status_icon',
     handles => {
         notify_message => 'send_message',
         clear_notify_message => 'cancel_message',
@@ -191,9 +204,9 @@ sub new_page {
 sub BUILD {
     my $self = shift @_;
 
+    $self->widget->add_accel_group($self->accel_group);
     $self->new_page;
     $self->widget->show_all;
-    $self->status_icon;
     return;
 }
 
