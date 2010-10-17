@@ -236,7 +236,7 @@ sub on_save_action_activate {
     $self->get_current_page->save_page;
 }
 
-sub home_button_clicked { ... }
+sub home_button_clicked { shift->get_current_page->load_page('Home') }
 
 sub new_page_button_clicked {
     my $self = shift @_;
