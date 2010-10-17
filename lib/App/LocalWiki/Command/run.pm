@@ -27,7 +27,7 @@ sub execute {
     Gtk2->init();
 
     #my $win = App::LocalWiki::Window::Main->new();
-    my $win = $self->app->main_window_class->new();
+    my $win = $self->app->main_window_class->new(app => $self->app);
     #$win->widget->show();
     $win->show_all();
 

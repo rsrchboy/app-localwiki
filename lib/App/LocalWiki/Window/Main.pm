@@ -22,6 +22,7 @@ with    'Gtk2::ExEx::With::Builder';
 
 use App::LocalWiki::Widget::WikiPage;
 use App::LocalWiki::Window::About;
+use App::LocalWiki::Repository;
 
 use File::ShareDir;
 
@@ -29,6 +30,8 @@ our $VERSION = '0.000_01';
 
 has '+filename'    => (default => 'share/WikiWiki.glade');
 has '+widget_name' => (default => 'window1');
+
+has app => (is => 'ro', isa => 'App::LocalWiki', required => 1);
 
 has statusbar => (
     is => 'ro', isa => 'Gtk2::Statusbar', lazy_build => 1,
@@ -192,8 +195,16 @@ sub new_page {
     my $self = shift @_; # FIXME ...
     my %arg = @_; # title, etc
 
-    %arg = (title => 'wah-wah', %arg);
-    my $view = App::LocalWiki::Widget::WikiPage->new(window => $self, %arg);
+    # FIXME hardcoded at one repo, at the moment
+    state $repo = $self
+        ->app
+        ->repository_class
+        ->new(name => 'default', uri => "$ENV{HOME}/.zimrepo")
+        ;
+
+    %arg = (title => 'wah-wah', repository => $repo, %arg);
+    #my $view = App::LocalWiki::Widget::WikiPage->new(window => $self, %arg);
+    my $view = $self->app->wikipage_widget_class->new(window => $self, %arg);
     return $self->add_page($view);
 
     #my $view = WikiPage->new(window => $self);

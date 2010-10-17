@@ -40,6 +40,9 @@ has buffer => (
 has config => (is => 'ro', isa => 'HashRef', default => sub { { } });
 has title  => (is => 'ro', isa => 'Str', default => 'wah-wah');
 
+has page       => (is => 'rw', isa => 'App::LocalWiki::Page');
+has repository => (is => 'ro', isa => 'App::LocalWiki::Repository', required => 1);
+
 has window => (
     is => 'ro', isa => 'App::LocalWiki::Window::Main', required => 1, weak_ref => 1,
     handles => [ qw{
@@ -120,10 +123,29 @@ sub link_clicked {
     return;
 }
 
+sub load_page {
+    my ($self, $link_name) = @_;
+
+    my $page = $self->repository->load_page($link_name);
+    #$self->set_parse_tree($page->get_parse_tree);
+    $self->set_parse_tree($page->parse_tree);
+    $self->page($page);
+}
+
+sub save_page {
+    my $self = shift @_;
+
+    $self->page->parse_tree($self->get_parse_tree);
+    $self->page->save_page;
+    return;
+}
+
 # UGH FIXME
 has _current_file => (is => 'rw', isa => 'Str');
 
-sub load_page {
+
+
+sub load_page_XXX {
     my ($self, $link_name) = @_;
 
     (my $file = $link_name) =~ s!:!/!g;
@@ -143,7 +165,7 @@ sub load_page {
     return;
 }
 
-sub save_page {
+sub save_page_XXX {
     my ($self) = @_;
 
     #croak "You tried to save page '$self', but it is read_only"

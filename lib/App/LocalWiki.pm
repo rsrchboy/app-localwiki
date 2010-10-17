@@ -22,7 +22,14 @@ our $VERSION = '0.000_01';
 
 sub default_command          { 'run'                                 }
 sub main_window_class        { 'App::LocalWiki::Window::Main'        }
+sub wikipage_widget_class    { 'App::LocalWiki::Widget::WikiPage'    }
+sub default_store_class      { 'App::LocalWiki::Store::File'         }
+sub repository_class         { 'App::LocalWiki::Repository'          }
 sub preferences_dialog_class { 'App::LocalWiki::Dialog::Preferences' }
+
+# FIXME
+has store => (is => 'ro', does => 'App::LocalWiki::Interface::Store', lazy_build => 1);
+sub _build_store { shift->default_store_class->new }
 
 # XXX some sort of MooseX::Hooks here
 
