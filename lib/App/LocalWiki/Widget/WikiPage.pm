@@ -231,11 +231,25 @@ my ($k_tab, $k_l_tab, $k_return, $k_kp_enter, $k_backspace, $k_escape, $k_multip
 
 my $punctuation = qr/[\.\!\?]*/;
 
+has _save_timeout => (is => 'ro', lazy_build => 1);
+
+sub _build__save_timeout {
+    my $self = shift @_;
+
+    return Glib::Timeout->add(
+        5_000,
+        sub { $self->save_page(); $self->_clear_save_timeout },
+    );
+}
+
 sub on_key_press_event { # some extra keybindings
     # FIXME for more consistent behaviour test for selections
     #my ($htext, $event, $self) = @_;
     my ($self, $htext, $event) = @_;
     my $val = $event->keyval();
+
+    # set up our save callback, if not otherwise
+    $self->_save_timeout unless $self->_has_save_timeout;
 
     #warn blessed $_ for $self, $htext, $event;
 
