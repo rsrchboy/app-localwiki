@@ -32,6 +32,7 @@ has buffer => (
         toggle_bold      => [ apply_format => 'bold'      ],
         toggle_italic    => [ apply_format => 'italic'    ],
         toggle_underline => [ apply_format => 'underline' ],
+        toggle_strike    => [ apply_format => 'strike'    ],
 
         ( map { $_ => $_ } qw{ set_parse_tree get_parse_tree } ),
     },
@@ -357,6 +358,37 @@ sub _is_verbatim {
     return 0;
 }
 
+=item C<parse_backspace(ITER)>
+
+This method is called when the user types a backspace.
+It tries to update the formatting of the current line.
+ 
+When TRUE is returned the widget does not receive the backspace.
+
+=cut
+
+sub parse_backspace {
+	my ($self, $iter) = @_;
+	my $buffer = $self->buffer;
+	my $lf = $buffer->get_iter_at_line( $iter->get_line );
+	my $line = $buffer->get_slice($lf, $iter, 0);
+	if ($line =~ /\t([\*\x{2022}\x{FFFC}]\s)$/) {
+		$iter->backward_chars(length $1);
+		my $begin = $iter->copy;
+		$begin->backward_char;
+		_user_action_ {
+			$buffer->delete($begin, $iter);
+		} $buffer;
+		return 1;
+	}
+	elsif ($line =~ /\t$/) {
+		my $back = $iter->copy;
+		$back->backward_char;
+		_user_action_ { $buffer->delete($back, $iter) } $buffer;
+		return 1;
+	}
+	return 0;
+}
 =item C<parse_line(ITER)>
 
 This method is called when the user is about to insert a linebreak.

@@ -66,9 +66,14 @@ sub _build_accel_group {
 
     my $group = widget AccelGroup => (
         connect => [
+            # formatting
             [ $ctrl->('B'), [], sub { $self->get_current_page->toggle_bold      } ],
             [ $ctrl->('I'), [], sub { $self->get_current_page->toggle_italic    } ],
             [ $ctrl->('U'), [], sub { $self->get_current_page->toggle_underline } ],
+            [ $ctrl->('K'), [], sub { $self->get_current_page->toggle_strike    } ],
+
+            # commands
+            [ $ctrl->('S'), [], sub { $self->on_save_action_activate            } ],
         ],
     );
     return $group;
@@ -203,13 +208,8 @@ sub new_page {
         ;
 
     %arg = (title => 'wah-wah', repository => $repo, %arg);
-    #my $view = App::LocalWiki::Widget::WikiPage->new(window => $self, %arg);
     my $view = $self->app->wikipage_widget_class->new(window => $self, %arg);
     return $self->add_page($view);
-
-    #my $view = WikiPage->new(window => $self);
-    #my $num = $self->append_notebook_page($view->widget, $arg{title});
-    #$view->show;
 }
 
 sub BUILD {
@@ -247,17 +247,6 @@ sub new_page_button_clicked {
 sub gtk_main_quit { Gtk2->main_quit }
 
 __PACKAGE__->meta->make_immutable;
-
-__END__
-
-package main;
-
-use Gtk2 -init;
-
-my $win = App::LocalWiki::Window::Main->new();
-$win->widget->show();
-
-Gtk2->main();
 
 __END__
 
