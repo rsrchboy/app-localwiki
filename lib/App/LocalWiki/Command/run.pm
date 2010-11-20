@@ -68,3 +68,47 @@ sub load_pixmaps {
 
 __PACKAGE__->meta->make_immutable;
 
+__END__
+
+=head1 NAME
+
+App::LocalWiki::Command::run - run the wiki!
+
+=head1 SEE ALSO
+
+L<App::Localwiki>
+
+=head1 BUGS AND LIMITATIONS
+
+All complex software has bugs lurking in it, and this module is no exception.
+
+Please report bugs to the author, preferably via the github issue tracker for
+this project.  (Pull requests welcomed enthuseastically!)
+
+Patches are welcome.
+
+=head1 AUTHOR
+
+Chris Weyl <cweyl@alumni.drew.edu>
+
+This program is based in part on work done by Japp Karssenberg,
+as part of the Zim project.
+
+=head1 LICENSE AND COPYRIGHT
+
+Copyright (c) 2010 Chris Weyl.
+
+This program is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
+
+Contains some code by and under an original license as follows:
+
+Jaap Karssenberg (Pardus) E<lt>pardus@cpan.orgE<gt>
+
+Copyright (c) 2006 Jaap G Karssenberg. All rights reserved.
+This program is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
+
+=cut
+
+

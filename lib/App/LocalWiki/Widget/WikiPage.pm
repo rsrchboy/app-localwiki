@@ -1,14 +1,3 @@
-#############################################################################
-#
-# Copyright (c) 2010 |COPYRIGHTHOLDER| <|EMAIL|>
-#
-# This library is free software; you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public
-# License as published by the Free Software Foundation; either
-# version 2.1 of the License, or (at your option) any later version.
-#
-#############################################################################
-
 package App::LocalWiki::Widget::WikiPage;
 
 use Moose;
@@ -144,60 +133,6 @@ sub save_page {
 # UGH FIXME
 has _current_file => (is => 'rw', isa => 'Str');
 
-
-
-sub load_page_XXX {
-    my ($self, $link_name) = @_;
-
-    (my $file = $link_name) =~ s!:!/!g;
-    # FIXME
-    $link_name =~ s/^\.//;
-    $file = "$ENV{HOME}/.zimrepo/$file.txt";
-
-    warn "link id: $link_name; file: $file";
-
-    my $fh = IO::File->new("< $file");
-    $self->_current_file($file);
-
-    my $page = {};
-    my $parse_tree = App::LocalWiki::Format::Zim->load_tree($fh, $page);
-    $self->set_parse_tree($parse_tree);
-
-    return;
-}
-
-sub save_page_XXX {
-    my ($self) = @_;
-
-    #croak "You tried to save page '$self', but it is read_only"
-    #    if $self->properties->{read_only};
-    #$self->{status} = ''; # remove "new" or "deleted"
-    #$self->{_links} = [ $self->list_links($tree) ];
-
-    my $tree = $self->get_parse_tree;
-    my $file = $self->_current_file();
-
-    warn "Saving buffer to $file";
-    my $fh = IO::File->new("> $file");
-
-    Zim::Formats->fix_file_ending($tree);
-
-    # store tree
-    my $date = Zim::Formats->header_date_string( time );
-    # my @meta = qw/Content-Type Wiki-Format Creation-Date Modification-Date/;
-    my $p = {
-        'Modification-Date' => $date,
-        'Creation-Date'     => $date,
-    };
-
-    # FIXME
-    App::LocalWiki::Format::Zim->save_tree($fh, $tree, $p);
-    $fh->close;
-
-    $self->brief_status(status => "$file saved");
-    return;
-}
-
 # FIXME
 use App::LocalWiki::Format::Zim;
 
@@ -250,7 +185,7 @@ sub on_key_press_event { # some extra keybindings
     my $val = $event->keyval();
 
     # set up our save callback, if not otherwise
-    $self->_save_timeout unless $self->_has_save_timeout;
+    do { warn 'timeout create'; $self->_save_timeout } unless $self->_has_save_timeout;
 
     #warn blessed $_ for $self, $htext, $event;
 
@@ -715,92 +650,44 @@ __PACKAGE__->meta->make_immutable;
 
 __END__
 
-package main;
-
-use Gtk2 -init;
-
-my $win = App::LocalWiki::Window::Main->new();
-$win->widget->show();
-
-Gtk2->main();
-
-__END__
-
 =head1 NAME
 
-<Module::Name> - <One line description of module's purpose>
-
-=head1 VERSION
-
-The initial template usually just has:
-
-This documentation refers to <Module::Name> version 0.0.1
-
-
-=head1 SYNOPSIS
-
-    use <Module::Name>;
-    # Brief but working code example(s) here showing the most common usage(s)
-
-    # This section will be as far as many users bother reading
-    # so make it as educational and exemplary as possible.
-
-
-=head1 DESCRIPTION
-
-A full description of the module and its features.
-May include numerous subsections (i.e. =head2, =head3, etc.)
-
-
-=head1 METHODS
-
-A separate section listing the public components of the module's interface.
-These normally consist of either subroutines that may be exported, or methods
-that may be called on objects belonging to the classes that the module provides.
-Name the section accordingly.
-
-In an object-oriented module, this section should begin with a sentence of the
-form "An object of this class represents...", to give the reader a high-level
-context to help them understand the methods that are subsequently described.
+App::LocalWiki::Widget::WikiPage - Page display widget
 
 =head1 SEE ALSO
 
-L<...>
+L<App::Localwiki>
 
 =head1 BUGS AND LIMITATIONS
 
-There are no known bugs in this module.
+All complex software has bugs lurking in it, and this module is no exception.
 
-Please report problems to |AUTHOR| <|EMAIL|>, or (preferred)
-to this package's RT tracker at E<bug-PACKAGE@rt.cpan.org>.
+Please report bugs to the author, preferably via the github issue tracker for
+this project.  (Pull requests welcomed enthuseastically!)
 
 Patches are welcome.
 
 =head1 AUTHOR
 
-|AUTHOR|  <|EMAIL|>
+Chris Weyl <cweyl@alumni.drew.edu>
 
+This program is based in part on work done by Japp Karssenberg,
+as part of the Zim project.
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright (c) 2010 |COPYRIGHTHOLDER| <|EMAIL|>
+Copyright (c) 2010 Chris Weyl.
 
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
+This program is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
 
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
+Contains some code by and under an original license as follows:
 
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the
+Jaap Karssenberg (Pardus) E<lt>pardus@cpan.orgE<gt>
 
-    Free Software Foundation, Inc.
-    59 Temple Place, Suite 330
-    Boston, MA  02111-1307  USA
+Copyright (c) 2006 Jaap G Karssenberg. All rights reserved.
+This program is free software; you can redistribute it and/or
+modify it under the same terms as Perl itself.
 
 =cut
 
