@@ -36,7 +36,7 @@ has signals_to => (is => 'ro', isa => 'Object', lazy_build => 1);
 
 has xml => (
     traits => [ 'String' ],
-    is => 'rw', isa => 'Str', lazy => 1,
+    is => 'rw', isa => 'Str', lazy => 1, default => '',
 );
 
 has builder    => (
