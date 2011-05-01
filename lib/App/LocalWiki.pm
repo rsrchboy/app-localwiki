@@ -26,10 +26,10 @@ __PACKAGE__->meta->make_immutable;
 
 __END__
 
-=head1 SYNOPSIS
-
-
 =head1 DESCRIPTION
+
+This is a local, Gtk2, desktop wiki.  It is in an extremely early stage of development, and
+may have radical changes made.
 
 =head1 SEE ALSO
 

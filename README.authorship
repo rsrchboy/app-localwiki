@@ -1,0 +1,22 @@
+App::LocalWiki came around after Zim decided to go over to Python.
+
+The Perl Zim has a significant amount of legacy bits to overcome: gotos,
+odd namespacing, Perl4 syntax in some areas....  However, it has a significant
+advantage in that it's already written.  As such, a significant amount of that
+code is incorprated herein until such time as it can be sunset.
+
+As such, any file containing any of the original Zim code is bound by the
+license choice of the Author; namely "Perl itself":
+
+    These modules were originally included with Zim, written and maintained by 
+
+        Jaap Karssenberg || Pardus [Larus] <pardus@cpan.org>
+
+        Copyright (c) 2005 Jaap G Karssenberg. All rights reserved. This
+        program is free software; you can redistribute it and/or modify it
+        under the same terms as Perl itself.
+
+Any new file without any legacy Zim code is released under the terms of the 
+GNU LGPL, version 2.1.
+
+Chris Weyl <cweyl@alumni.drew.edu>

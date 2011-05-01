@@ -11,8 +11,6 @@ with 'MooseX::Traits';
 use Path::Class;
 use Readonly;
 
-our $VERSION = '0.000_01';
-
 has config => (
     # traits => ...
     # is => 'ro', 
