@@ -1,33 +1,14 @@
-package App::LocalWiki;
+=pod
 
-# ABSTRACT: A little desktop wiki
+=head1 NAME
 
-use Moose;
-use common::sense;
+App::LocalWiki - A little desktop wiki
 
-extends 'MooseX::App::Cmd';
-# FIXME do we want to do some sort of apply-to-instance dealie here?
-#with 'MooseX::Traits';
+=head1 VERSION
 
-sub default_command          { 'run'                                 }
-sub main_window_class        { 'App::LocalWiki::Window::Main'        }
-sub wikipage_widget_class    { 'App::LocalWiki::Widget::WikiPage'    }
-sub default_store_class      { 'App::LocalWiki::Store::File'         }
-sub repository_class         { 'App::LocalWiki::Repository'          }
-sub preferences_dialog_class { 'App::LocalWiki::Dialog::Preferences' }
-
-# FIXME
-has store => (is => 'ro', does => 'App::LocalWiki::Interface::Store', lazy_build => 1);
-sub _build_store { shift->default_store_class->new }
-
-# XXX some sort of MooseX::Hooks here
-
-__PACKAGE__->meta->make_immutable;
-
-__END__
+version 0.001
 
 =head1 SYNOPSIS
-
 
 =head1 DESCRIPTION
 
@@ -66,6 +47,15 @@ Copyright (c) 2006 Jaap G Karssenberg. All rights reserved.
 This program is free software; you can redistribute it and/or
 modify it under the same terms as Perl itself.
 
-=cut
+=head1 AUTHOR
 
+Chris Weyl <cweyl@alumni.drew.edu>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2011 by Chris Weyl.
+
+This is free software, licensed under:
+
+  The GNU Lesser General Public License, Version 2.1, February 1999
 

@@ -1,5 +1,9 @@
 #!/usr/bin/env perl
 
+package main; # Pod::Weaver seems to need this?!
+
+# ABSTRACT: localwiki invoker
+
 use common::sense;
 use App::LocalWiki;
 

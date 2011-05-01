@@ -6,7 +6,7 @@ _build*
 pm_to_blib*
 *.tar.gz
 .lwpcookies
-[% dist_name %]-*
+App-LocalWiki-*
 cover_db
 *.old
 inc
@@ -14,3 +14,4 @@ inc
 META.yml
 *.bak
 MYMETA.*
+.build/
