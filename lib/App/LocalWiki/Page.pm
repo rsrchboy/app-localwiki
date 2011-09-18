@@ -2,6 +2,7 @@ package App::LocalWiki::Page;
 
 use Moose;
 use namespace::autoclean;
+use Document::Store::Types ':all';
 use MooseX::InstanceTracking;
 
 #has id
@@ -9,7 +10,8 @@ use MooseX::InstanceTracking;
 #link_id
 #in_store
 
-has store      => (is => 'ro', does => 'App::LocalWiki::Interface::Store', required => 1);
+#has store      => (is => 'ro', isa => Backend, required => 1);
+has store      => (is => 'ro', isa => 'App::LocalWiki::Store', required => 1);
 has parse_tree => (is => 'rw', trigger => sub { shift->mark_dirty });
 has link_id    => (is => 'ro', isa => 'Str');
 

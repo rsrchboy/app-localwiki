@@ -1,22 +1,48 @@
-package App::LocalWiki::Store::File;
+package App::LocalWiki::Store;
+
+# ABSTRACT: A thin(ish) wrapper around Document::Store
 
 use Moose;
 use namespace::autoclean;
+use MooseX::AttributeShortcuts;
 use MooseX::Types::Path::Class ':all';
 use MooseX::Types::URI         ':all';
 
+use Document::Store;
+use Document::Store::Types ':all';
 use Path::Class;
+
 use App::LocalWiki::Page;
 
-sub shortname   { 'filesystem'                                 }
-sub description { 'A simple store for a directory/file layout' }
+use Smart::Comments;
 
 has uri => (
     is => 'rw', isa => Dir, required => 1, coerce => 1,
-    handles => { path_root => 'file' },
-    # FIXME
-    default => "$ENV{HOME}/.zimrepo",
+    handles => {
+
+        path_root          => 'file',
+        location_as_string => 'stringify',
+    },
 );
+
+has _store => (
+    is => 'lazy',
+    isa => Backend,
+
+    handles => {
+        contains_page => 'contains',
+        fetch_raw_page => 'fetch',
+    },
+);
+
+sub _build__store {
+    my $self = shift @_;
+
+    return Document::Store->open(
+        backend => 'Filesystem',
+        location => $self->location_as_string,
+    );
+}
 
 sub page_class { 'App::LocalWiki::Page' }
 
@@ -30,14 +56,12 @@ sub _link_to_file {
     # FIXME
     $link_name =~ s/^\.//;
     #$file = "$ENV{HOME}/.zimrepo/$file.txt";
-    return file $self->uri, "$file.txt";
+    #return file $self->uri, "$file.txt";
+    return file "$file.txt";
 }
 
 sub get_page { ... }
 sub set_page { ... }
-
-# UGH FIXME
-#has _current_file => (is => 'rw');
 
 sub load_page {
     my ($self, $link_name) = @_;
@@ -47,11 +71,18 @@ sub load_page {
 
     warn "link id: $link_name; file: $file";
 
-    my $fh = IO::File->new("< $file");
-    #$self->_current_file($file);
+    warn;
+    my $doc = $self->fetch_raw_page($file);
+    warn;
 
+    ### doc: ref $doc
+    # ## content: $doc->content
+
+    warn "doc: " . ref $doc;
+    warn 'content: ' . $doc->content;
     my $page = {};
-    my $parse_tree = App::LocalWiki::Format::Zim->load_tree($fh, $page); 
+    my $parse_tree = App::LocalWiki::Format::Zim->load_tree_from_string($doc->content(), $page); 
+    warn;
     #$self->buffer->set_parse_tree($parse_tree);
     #$self->set_parse_tree($parse_tree);
 
@@ -59,19 +90,26 @@ sub load_page {
         store      => $self,
         parse_tree => $parse_tree,
         link_id    => $link_name,
-        save_page  => sub { $self->save_page($file, @_) },
+        save_page  => sub { $self->save_page($doc, @_) },
+
+        raw => $doc->content,
 
     );
 }
 
 sub save_page    {
-    my ($self, $file, $page) = @_;
+    my ($self, $doc, $page, $wpage) = @_;
 
-    #$self->{_links} = [ $self->list_links($tree) ];
+    my @ser = $wpage->widget->serialise;
+    ### @ser
 
-    my $tree = $page->parse_tree;
-    #my $file = $self->_current_file();
+    return;
 
+    ### serialize page content...
+
+    ### ...and pass off to the store to save
+
+    my ($file, $tree);
     warn "Saving buffer to $file";
     my $fh = IO::File->new("> $file");
 
@@ -84,11 +122,11 @@ sub save_page    {
         'Modification-Date' => $date,
         'Creation-Date'     => $date,
     };
-    
+
     # FIXME
     App::LocalWiki::Format::Zim->save_tree($fh, $tree, $p);
     $fh->close;
-        
+
     #$self->brief_status(status => "$file saved");
     return;
 }
@@ -102,6 +140,6 @@ sub has_remote { ... }
 
 sub flush { ... }
 
-with 'App::LocalWiki::Interface::Store';
-
 __PACKAGE__->meta->make_immutable;
+
+!!42;

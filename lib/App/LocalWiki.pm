@@ -12,7 +12,8 @@ extends 'MooseX::App::Cmd';
 sub default_command          { 'run'                                 }
 sub main_window_class        { 'App::LocalWiki::Window::Main'        }
 sub wikipage_widget_class    { 'App::LocalWiki::Widget::WikiPage'    }
-sub default_store_class      { 'App::LocalWiki::Store::File'         }
+#sub default_store_class      { 'App::LocalWiki::Store::File'         }
+sub default_store_class      { 'App::LocalWiki::Store'         }
 sub repository_class         { 'App::LocalWiki::Repository'          }
 sub preferences_dialog_class { 'App::LocalWiki::Dialog::Preferences' }
 

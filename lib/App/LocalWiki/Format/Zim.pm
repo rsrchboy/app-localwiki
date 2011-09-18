@@ -534,11 +534,24 @@ Reads plain text from a filehandle and returns a parse tree.
 sub load_tree { # TODO whitelines between verbatim blocks should be preserved
 	my ($class, $io, $page) = @_;
 
+    return $class->load_tree_from_string(
+        do { local $\; join "\n", <$io> },
+        $page,
+    );
+}
+
+sub load_tree_from_string { # TODO whitelines between verbatim blocks should be preserved
+	my ($class, $content, $page) = @_;
+
+    $content = [ split /\n/, $content ]
+        unless ref $content;
+
 	my @tree;
 	my $para = ''; # paragraph buffer
 	my $first = 1; # used to detect the first paragraph
 	my $verbatim = 0; # true when inside a verbatim block
-	while (<$io>) {
+	for (@$content) {
+        warn $_;
 		s/\r?\n$/\n/; # DOS to Unix conversion
 		unless (/\S/) { # empty line
 			if ($verbatim and $para !~ /^\s*'''\s*\Z/m) {
