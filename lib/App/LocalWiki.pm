@@ -8,7 +8,8 @@ use common::sense;
 use MooseX::AttributeShortcuts;
 
 use Path::Class;
-use Config::Tiny;
+#use Config::Tiny;
+use Config::GitLike;
 
 use App::LocalWiki::Types ':all';
 
@@ -24,8 +25,17 @@ sub wikipage_widget_class    { 'App::LocalWiki::Widget::WikiPage'    }
 sub store_class              { 'App::LocalWiki::Store'               }
 sub preferences_dialog_class { 'App::LocalWiki::Dialog::Preferences' }
 
-has config => (is => 'lazy', isa => 'Config::Tiny');
-sub _build_config { Config::Tiny->read("$ENV{HOME}/.localwiki") }
+has config => (
+    traits => ['Hash'],
+    is => 'lazy',
+    isa => 'HashRef',
+
+    handles => {
+
+        stores => [ get => 'stores' ],
+    }
+
+);
 
 has window    => (
     is        => 'rwp',
@@ -37,11 +47,32 @@ has window    => (
     },
 );
 
+sub _build_config {
+
+    # FIXME
+    #Config::Tiny->read("$ENV{HOME}/.localwiki");
+    return {
+        stores => {
+            default => {
+
+                location => "$ENV{HOME}/.zimrepo",
+                type     => 'Filesystem',
+            },
+        },
+    };
+}
+
 sub run_wiki {
     my ($self, $opts, $args) = @_;
 
     Class::MOP::load_class($_)
         for 'Gtk2', $self->main_window_class;
+
+    #Class::MOP::load_class('Config::GitLike');
+    #my $cfg = Config::GitLike->new(confname => 'localwiki');
+    #$cfg->load;
+    # ### $cfg
+    #die;
 
     my $dump = $self->config;
     ### $dump
@@ -49,7 +80,14 @@ sub run_wiki {
     Gtk2->init();
 
     $self->load_pixmaps();
-    $self->_set_window($self->main_window_class->new(app => $self));
+    $self->_set_window(
+        $self
+            ->main_window_class
+            ->new(
+                app   => $self,
+                store => $self->store_class->new($self->stores->{default}),
+            )
+    );
     $self->show_window();
 
     Gtk2->main();
