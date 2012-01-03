@@ -114,7 +114,7 @@ around append_notebook_page => sub {
     my $page = shift @_;
 
     my $scroller = widget ScrolledWindow => (
-        BUILD => sub { shift->add_with_viewport($page) },
+        BUILD => sub { shift->add($page) },
         set => {
             'hscrollbar-policy' => 'automatic',
             'vscrollbar-policy' => 'automatic',
