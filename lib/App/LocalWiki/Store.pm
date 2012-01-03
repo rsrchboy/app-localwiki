@@ -16,7 +16,7 @@ use App::LocalWiki::Page;
 
 use Smart::Comments;
 
-has uri => (
+has location => (
     is => 'rw', isa => Dir, required => 1, coerce => 1,
     handles => {
 
@@ -30,8 +30,11 @@ has _store => (
     isa => Backend,
 
     handles => {
-        contains_page => 'contains',
+
+        backend_name   => 'name',
+        contains_page  => 'contains',
         fetch_raw_page => 'fetch',
+        #save_page     => 'update',
     },
 );
 
@@ -39,14 +42,12 @@ sub _build__store {
     my $self = shift @_;
 
     return Document::Store->open(
-        backend => 'Filesystem',
+        backend  => 'Filesystem',
         location => $self->location_as_string,
     );
 }
 
 sub page_class { 'App::LocalWiki::Page' }
-
-sub has_page { defined shift->_link_to_file(shift)->stat }
 
 #sub _link_to_file { file shift->path_root, split(/:/, shift) }
 sub _link_to_file {
@@ -102,6 +103,10 @@ sub save_page    {
 
     my @ser = $wpage->widget->serialise;
     ### @ser
+
+    $doc->content(join("\n", @ser));
+    #$doc->update;
+    $self->store->update($doc);
 
     return;
 

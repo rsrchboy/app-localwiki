@@ -14,6 +14,8 @@ use Gtk2::Ex::HyperTextBuffer;
 
 our $VERSION = '0.000_01';
 
+use Document::Store::Types ':all';
+
 has '+widget_name' => (default => 'wah wah');
 has buffer => (
     is => 'ro', isa => 'Gtk2::Ex::HyperTextBuffer', lazy_build => 1,
@@ -31,7 +33,9 @@ has config => (is => 'ro', isa => 'HashRef', default => sub { { } });
 has title  => (is => 'ro', isa => 'Str', default => 'wah-wah');
 
 has page       => (is => 'rw', isa => 'App::LocalWiki::Page');
-has repository => (is => 'ro', isa => 'App::LocalWiki::Repository', required => 1);
+#has repository => (is => 'ro', isa => 'App::LocalWiki::Repository', required => 1);
+#has store => (is => 'ro', isa => Backend, required => 1);
+has store => (is => 'ro', isa => 'App::LocalWiki::Store', required => 1);
 
 has window => (
     is => 'ro', isa => 'App::LocalWiki::Window::Main', required => 1, weak_ref => 1,
@@ -116,7 +120,7 @@ sub link_clicked {
 sub load_page {
     my ($self, $link_name) = @_;
 
-    my $page = $self->repository->load_page($link_name);
+    my $page = $self->store->load_page($link_name);
     #$self->set_parse_tree($page->get_parse_tree);
     $self->set_parse_tree($page->parse_tree);
     $self->page($page);

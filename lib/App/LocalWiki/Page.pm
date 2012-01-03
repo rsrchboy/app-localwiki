@@ -15,6 +15,9 @@ has store      => (is => 'ro', isa => 'App::LocalWiki::Store', required => 1);
 has parse_tree => (is => 'rw', trigger => sub { shift->mark_dirty });
 has link_id    => (is => 'ro', isa => 'Str');
 
+# XXX
+has raw => (is => 'rw');
+
 has is_dirty => (
     traits => [ 'Bool' ],
     is => 'ro', isa => 'Bool', default => 0,

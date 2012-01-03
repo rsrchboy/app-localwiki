@@ -3,6 +3,7 @@ package App::LocalWiki::Window::Main;
 use Moose;
 use namespace::autoclean;
 use common::sense;
+use MooseX::AttributeShortcuts;
 use Gtk2::ExEx::Declarative 'widget';
 use Smart::Comments;
 
@@ -11,7 +12,7 @@ with    'Gtk2::ExEx::With::Builder';
 
 use App::LocalWiki::Widget::WikiPage;
 use App::LocalWiki::Window::About;
-use App::LocalWiki::Repository;
+use App::LocalWiki::Store;
 
 use File::ShareDir;
 
@@ -22,13 +23,40 @@ has '+widget_name' => (default => 'window1');
 
 has app => (is => 'ro', isa => 'App::LocalWiki', required => 1);
 
-has statusbar => (
-    is => 'ro', isa => 'Gtk2::Statusbar', lazy_build => 1,
-    handles => {
+has statusbar  => (
+    is         => 'ro',
+    isa        => 'Gtk2::Statusbar',
+    lazy_build => 1,
+    handles    => {
+
         push_status => 'push',
         pop_status  => 'pop',
     },
 );
+
+has store   => (
+    is      => 'ro',
+    isa     => 'App::LocalWiki::Store',
+    required => 1,
+    #lazy    => 1,
+    #builder => 1,
+);
+
+
+sub _build_store {
+    my $self = shift @_;
+
+    my $store = $self
+        ->app
+        ->store_class
+        ->new(
+            name     => 'default',
+            location => "$ENV{HOME}/.zimrepo",
+            backend  => 'Filesystem'
+        )
+        ;
+    return $store;
+}
 
 sub brief_status {
     my ($self, %arg) = @_;
@@ -189,14 +217,7 @@ sub new_page {
     my $self = shift @_; # FIXME ...
     my %arg = @_; # title, etc
 
-    # FIXME hardcoded at one repo, at the moment
-    state $repo = $self
-        ->app
-        ->repository_class
-        ->new(name => 'default', uri => "$ENV{HOME}/.zimrepo")
-        ;
-
-    %arg = (title => 'wah-wah', repository => $repo, %arg);
+    %arg = (title => 'wah-wah', store => $self->store, %arg);
     my $view = $self->app->wikipage_widget_class->new(window => $self, %arg);
     return $self->add_page($view);
 }
