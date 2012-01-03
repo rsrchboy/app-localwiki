@@ -5,6 +5,27 @@ package main; # Pod::Weaver seems to need this?!
 # ABSTRACT: localwiki invoker
 
 use common::sense;
+use Path::Class;
+use FindBin;
+
+BEGIN {
+
+    my $parent = dir($FindBin::Bin)->parent->absolute;
+
+    our $IS_SANDBOXED =
+        !!( file($parent, 'Makefile.PL')->stat ) ||
+        !!( dir($parent, '.git')->stat         )
+        ;
+
+    push @INC, dir($parent, 'lib')->stringify
+        if $IS_SANDBOXED;
+}
+
+# tmp
+use lib dir(qw{ .. document-store lib })->stringify;
+use lib dir(qw{ .. gtk2-ex-hypertextview lib })->stringify;
+#use lib dir($parent, qw{ .. document-store })->stringify;
+
 use App::LocalWiki;
 
 App::LocalWiki->run;
