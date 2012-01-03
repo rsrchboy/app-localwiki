@@ -1,21 +1,6 @@
-#
-#===============================================================================
-#
-#         FILE:  Declarative.pm
-#
-#  DESCRIPTION:  
-#
-#        FILES:  ---
-#         BUGS:  ---
-#        NOTES:  ---
-#       AUTHOR:  YOUR NAME (), 
-#      COMPANY:  
-#      VERSION:  1.0
-#      CREATED:  10/03/2010 09:41:05 PM
-#     REVISION:  ---
-#===============================================================================
-
 package Gtk2::ExEx::Declarative;
+
+# ABSTRACT: Declare your Gtk2 widgets
 
 use strict;
 use warnings;
@@ -25,7 +10,6 @@ use Sub::Exporter -setup => { exports => [ qw{ widget } ] };
 
 use Gtk2;
 
-    # FIXME for Gtk2::Declarative
     # Widget => { 
     #   new => sub { ... },  # only if needed
     #   set => { ... },
@@ -48,7 +32,7 @@ sub widget {
         my %signal = %{ $arg{$method} || {} };
         $widget->$method($_ => $signal{$_}) for keys %signal;
     }
-    
+
     $widget->connect(@{$_}) for @{ $arg{connect} };
 
     my %call_methods = %{ $arg{call_methods} || {} };
@@ -65,7 +49,7 @@ sub _name_to_widget {
 
     $name =~ s/_(.)/\u$1/g;
     $name = "Gtk2::$name";
-    
+
     return $name;
 }
 
